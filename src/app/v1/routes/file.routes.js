@@ -7,13 +7,13 @@ const router = express.Router();
 router.post(
   "/upload/single",
   Upload.single("file"),
-  FileController.uploadSinglefile,
+  FileController.uploadSingle,
 );
 
 router.post(
   "/upload/multiple",
   Upload.array("files"),
-  FileController.uploadMultiplefile,
+  FileController.uploadMultiple,
 );
 
 module.exports = router;

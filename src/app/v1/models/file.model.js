@@ -1,49 +1,43 @@
+const BUCKET_NAME = require("../../../utils/constaints");
 const minioClient = require("../configs/minio.config");
 
-const BUCKET_NAME = process.env.BUCKET_NAME || "media";
-
 class FileModel {
-  static async uploadFileSingle({ bucketName, fileName, fileBuffer, myType }) {
+  static async uploadSingle({ originalname, mimetype, buffer }) {
     try {
-      const bucketExists = await minioClient.bucketExists(bucketName);
+      const bucketExists = await minioClient.bucketExists(BUCKET_NAME);
+
       if (!bucketExists) {
-        await minioClient.makeBucket(bucketName, "us-east-1");
+        await minioClient.makeBucket(BUCKET_NAME, "us-east-1");
       }
 
-      const metaData = {
-        "Content-Type": myType,
-      };
-
       await minioClient.putObject(
-        bucketName,
-        fileName,
-        fileBuffer,
-        fileBuffer.length,
-        metaData,
+        BUCKET_NAME,
+        originalname,
+        buffer,
+        buffer.length,
+        {
+          "Content-Type": mimetype,
+        },
       );
 
-      const endPoint = process.env.ENDPOINT || "localhost";
-      const port = process.env.MINIO_API_PORT || 9000;
-
       return {
-        bucket: bucketName,
-        objectName: fileName,
-        url: `http://${endPoint}:${port}/${bucketName}/${fileName}`,
+        bucket: BUCKET_NAME,
+        objectName: originalname,
       };
     } catch (error) {
       throw error;
     }
   }
 
-  static async uploadMultiplefile({ bucketName, objectFile }) {
+  static async uploadMultiple({ objectFile }) {
     try {
       const uploadPromise = objectFile.map(
-        ({ fileName, fileBuffer, mimetype }) => {
+        ({ originalname, buffer, mimetype }) => {
           minioClient.putObject(
-            bucketName,
-            fileName,
-            fileBuffer,
-            fileBuffer.length,
+            BUCKET_NAME,
+            originalname,
+            buffer,
+            buffer.length,
             {
               "content-type": mimetype,
             },
