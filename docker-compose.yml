@@ -1,0 +1,13 @@
+services:
+  minio:
+    image: pgsty/minio:latest
+    container_name: minio
+    restart: always
+    env_file:
+      - .env
+    command: server /minio_data --console-address ":9001"
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # Admin UI
+    volumes:
+      - ./minio_data:/minio_data

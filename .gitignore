@@ -1,0 +1,5 @@
+.env
+node_modules
+Minio_data
+yarn.lock
+package-log.json
