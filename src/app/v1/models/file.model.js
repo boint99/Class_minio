@@ -3,12 +3,6 @@ const minioClient = require("../configs/minio.config");
 const BUCKET_NAME = process.env.BUCKET_NAME || "media";
 
 class FileModel {
-  /**
-   * Upload một file lên Minio
-   * @param {Object} file - File object từ multer (req.file)
-   * @param {String} objectName - Tên object trên Minio
-   * @returns {Object} Thông tin file đã upload
-   */
   static async uploadFileSingle({ bucketName, fileName, fileBuffer, myType }) {
     try {
       const bucketExists = await minioClient.bucketExists(bucketName);
@@ -20,7 +14,13 @@ class FileModel {
         "Content-Type": myType,
       };
 
-      await minioClient.putObject(bucketName, fileName, fileBuffer, fileBuffer.length, metaData);
+      await minioClient.putObject(
+        bucketName,
+        fileName,
+        fileBuffer,
+        fileBuffer.length,
+        metaData,
+      );
 
       const endPoint = process.env.ENDPOINT || "localhost";
       const port = process.env.MINIO_API_PORT || 9000;
@@ -31,20 +31,26 @@ class FileModel {
         url: `http://${endPoint}:${port}/${bucketName}/${fileName}`,
       };
     } catch (error) {
-      console.log("🚀 ~ FileModel ~ uploadFileSingle ~ error:", error);
       throw error;
     }
   }
 
-  /**
-   * Xóa một file trên Minio
-   * @param {String} objectName - Tên object cần xóa
-   * @returns {Boolean} true nếu xóa thành công
-   */
-  static async deleteFile(objectName) {
+  static async uploadMultiplefile({ bucketName, objectFile }) {
     try {
-      await minioClient.removeObject(BUCKET_NAME, objectName);
-      return true;
+      const uploadPromise = objectFile.map(
+        ({ fileName, fileBuffer, mimetype }) => {
+          minioClient.putObject(
+            bucketName,
+            fileName,
+            fileBuffer,
+            fileBuffer.length,
+            {
+              "content-type": mimetype,
+            },
+          );
+        },
+      );
+      await Promise.all(uploadPromise);
     } catch (error) {
       throw error;
     }

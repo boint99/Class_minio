@@ -16,10 +16,4 @@ router.post(
   FileController.uploadMultiplefile,
 );
 
-router.put(
-  "/upload/update",
-  Upload.single("file"),
-  FileController.updateImage,
-);
-
 module.exports = router;

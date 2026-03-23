@@ -34,23 +34,6 @@ class FileController {
       });
     }
   }
-
-  async updateImage(req, res) {
-    try {
-      const file = await FileService.updateImage(req);
-      return res.status(200).json({
-        success: true,
-        message: "Image updated successfully",
-        data: file,
-      });
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-        data: null,
-      });
-    }
-  }
 }
 
 module.exports = new FileController();
