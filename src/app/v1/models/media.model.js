@@ -1,8 +1,8 @@
 const BUCKET_NAME = require("../../../utils/constaints");
 const minioClient = require("../configs/minio.config");
 
-class FileModel {
-  static async uploadSingle({ originalname, mimetype, buffer }) {
+class MediaModel {
+  static async uploadObject({ originalname, mimetype, buffer }) {
     try {
       const bucketExists = await minioClient.bucketExists(BUCKET_NAME);
 
@@ -29,7 +29,7 @@ class FileModel {
     }
   }
 
-  static async uploadMultiple({ objectFile }) {
+  static async uploadObjects({ objectFile }) {
     try {
       const uploadPromise = objectFile.map(
         ({ originalname, buffer, mimetype }) => {
@@ -39,7 +39,7 @@ class FileModel {
             buffer,
             buffer.length,
             {
-              "content-type": mimetype,
+              "Content-Type": mimetype,
             },
           );
         },
@@ -49,6 +49,15 @@ class FileModel {
       throw error;
     }
   }
+
+  static async downloadObject(bucketName, objectName) {
+    try {
+      const dataStream = await minioClient.getObject(bucketName, objectName);
+      return dataStream;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
-module.exports = FileModel;
+module.exports = MediaModel;

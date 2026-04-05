@@ -1,5 +1,5 @@
 const express = require("express");
-const FileController = require("../controllers/file.controller");
+const MediaController = require("../controllers/media.controller");
 const Upload = require("../../../utils/multer.utils");
 
 const router = express.Router();
@@ -7,13 +7,15 @@ const router = express.Router();
 router.post(
   "/upload/single",
   Upload.single("file"),
-  FileController.uploadSingle,
+  MediaController.uploadObject,
 );
 
 router.post(
   "/upload/multiple",
   Upload.array("files"),
-  FileController.uploadMultiple,
+  MediaController.uploadObjects,
 );
+
+router.get("/:bucketName/:objectName", MediaController.downloadObject);
 
 module.exports = router;
