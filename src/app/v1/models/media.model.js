@@ -50,10 +50,38 @@ class MediaModel {
     }
   }
 
-  static async downloadObject(bucketName, objectName) {
+  static async viewObject(bucketName, objectName) {
     try {
       const dataStream = await minioClient.getObject(bucketName, objectName);
       return dataStream;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getObjectStat(bucketName, objectName) {
+    try {
+      const objectStat = await minioClient.statObject(bucketName, objectName);
+      return objectStat;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getObjectUrl(
+    bucketName,
+    objectName,
+    expiry = 24 * 60 * 60,
+    reqParams = {},
+  ) {
+    try {
+      const url = await minioClient.presignedGetObject(
+        bucketName,
+        objectName,
+        expiry,
+        reqParams,
+      );
+      return url;
     } catch (error) {
       throw error;
     }

@@ -31,15 +31,64 @@ class MediaController {
     }
   }
 
-  static async downloadObject(req, res) {
+  static async viewObject(req, res) {
     try {
       const { objectName, bucketName } = req.params;
-      const fileStream = await MediaService.downloadObject(
+      const { download } = req.query;
+
+      const fileStream = await MediaService.viewObject(bucketName, objectName);
+
+      const contentType =
+        fileStream.headers?.["content-type"] || "application/octet-stream";
+      const contentLength = fileStream.headers?.["content-length"];
+      const disposition = download === "true" ? "attachment" : "inline";
+
+      res.set("Content-Type", contentType);
+      if (contentLength) res.set("Content-Length", contentLength);
+      res.set(
+        "Content-Disposition",
+        `${disposition}; filename="${objectName}"`,
+      );
+
+      fileStream.pipe(res);
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  static async getObjectUrl(req, res) {
+    try {
+      const { bucketName, objectName, expiry, download, contentType } =
+        req.query;
+
+      const parsedExpiry = Number(expiry);
+      const safeExpiry =
+        Number.isFinite(parsedExpiry) && parsedExpiry > 0
+          ? parsedExpiry
+          : 24 * 60 * 60;
+
+      const reqParams = {};
+      if (download) {
+        reqParams["response-content-disposition"] =
+          `attachment; filename="${download}"`;
+      }
+      if (contentType) {
+        reqParams["response-content-type"] = contentType;
+      }
+
+      const url = await MediaService.getObjectUrl(
         bucketName,
         objectName,
+        safeExpiry,
+        reqParams,
       );
-      res.set("content-type", "application/octet-stream");
-      fileStream.pipe(res);
+      return res.status(200).json({
+        success: true,
+        url,
+      });
     } catch (error) {
       return res.status(500).json({
         success: false,

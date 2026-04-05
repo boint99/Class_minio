@@ -27,11 +27,35 @@ class MediaService {
     return await MediaModel.uploadObjects({ objectFile });
   }
 
-  static async downloadObject(bucketName, objectName) {
+  static async viewObject(bucketName, objectName) {
     if (!bucketName || !objectName) {
       throw new Error("Bucket name and object name are required");
     }
-    return await MediaModel.downloadObject(bucketName, objectName);
+    return await MediaModel.viewObject(bucketName, objectName);
+  }
+
+  static async getObjectStat(bucketName, objectName) {
+    if (!bucketName || !objectName) {
+      throw new Error("Bucket name and object name are required");
+    }
+    return await MediaModel.getObjectStat(bucketName, objectName);
+  }
+
+  static async getObjectUrl(
+    bucketName,
+    objectName,
+    expiry = 24 * 60 * 60,
+    reqParams = {},
+  ) {
+    if (!bucketName || !objectName) {
+      throw new Error("Bucket name and object name are required");
+    }
+    return await MediaModel.getObjectUrl(
+      bucketName,
+      objectName,
+      expiry,
+      reqParams,
+    );
   }
 }
 
