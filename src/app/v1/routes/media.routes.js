@@ -19,7 +19,7 @@ router.post(
 // node /media/media/download.jpg
 router.get("/:bucketName/:objectName", MediaController.viewObject);
 
-// GET /api/v1/media?bucketName=media&objectName=test.jpg&expiry=3600&download=myfile.jpg&contentType=image/jpeg
+// GET /media?bucketName=media&objectName=test.jpg&expiry=3600&download=myfile.jpg&contentType=image/jpeg
 router.get("/", MediaController.getObjectUrl);
 
 module.exports = router;
