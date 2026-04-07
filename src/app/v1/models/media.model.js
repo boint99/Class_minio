@@ -68,20 +68,24 @@ class MediaModel {
     }
   }
 
-  static async getObjectUrl(
-    bucketName,
-    objectName,
-    expiry = 24 * 60 * 60,
-    reqParams = {},
-  ) {
+  static async getObjectUrl(bucketName, objectName, expiry) {
     try {
-      const url = await minioClient.presignedGetObject(
+      const url = await minioClient.presignedUrl(
+        "GET",
         bucketName,
         objectName,
         expiry,
-        reqParams,
       );
       return url;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async getObjectInfo(bucketName, objectName) {
+    try {
+      const objectInfo = await minioClient.statObject(bucketName, objectName);
+      return objectInfo;
     } catch (error) {
       throw error;
     }

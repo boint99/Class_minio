@@ -16,10 +16,10 @@ router.post(
   MediaController.uploadObjects,
 );
 
-// node /media/media/download.jpg
 router.get("/:bucketName/:objectName", MediaController.viewObject);
 
-// GET /media?bucketName=media&objectName=test.jpg&expiry=3600&download=myfile.jpg&contentType=image/jpeg
-router.get("/", MediaController.getObjectUrl);
+router.get("/:bucketName/:objectName/url", MediaController.getObjectUrl);
+
+router.get("/:bucketName/:objectName/info", MediaController.getObjectInfo);
 
 module.exports = router;

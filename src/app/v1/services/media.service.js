@@ -41,21 +41,25 @@ class MediaService {
     return await MediaModel.getObjectStat(bucketName, objectName);
   }
 
-  static async getObjectUrl(
-    bucketName,
-    objectName,
-    expiry = 24 * 60 * 60,
-    reqParams = {},
-  ) {
+  static async getObjectUrl(bucketName, objectName, expiry = 3600) {
     if (!bucketName || !objectName) {
       throw new Error("Bucket name and object name are required");
     }
-    return await MediaModel.getObjectUrl(
-      bucketName,
-      objectName,
-      expiry,
-      reqParams,
-    );
+    const parsedExpiry = Number(expiry) || 3600;
+
+    return await MediaModel.getObjectUrl(bucketName, objectName, parsedExpiry);
+  }
+
+  static async getObjectInfo(bucketName, objectName) {
+    try {
+      if (!bucketName || !objectName) {
+        throw new Error("Bucket name and object name are required");
+      }
+
+      return await MediaModel.getObjectInfo(bucketName, objectName);
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

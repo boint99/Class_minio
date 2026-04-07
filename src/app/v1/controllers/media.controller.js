@@ -61,33 +61,35 @@ class MediaController {
 
   static async getObjectUrl(req, res) {
     try {
-      const { bucketName, objectName, expiry, download, contentType } =
-        req.query;
-
-      const parsedExpiry = Number(expiry);
-      const safeExpiry =
-        Number.isFinite(parsedExpiry) && parsedExpiry > 0
-          ? parsedExpiry
-          : 24 * 60 * 60;
-
-      const reqParams = {};
-      if (download) {
-        reqParams["response-content-disposition"] =
-          `attachment; filename="${download}"`;
-      }
-      if (contentType) {
-        reqParams["response-content-type"] = contentType;
-      }
-
+      const { bucketName, objectName } = req.params;
+      const expiry = Number(req.query.expiry) || 3600;
       const url = await MediaService.getObjectUrl(
         bucketName,
         objectName,
-        safeExpiry,
-        reqParams,
+        expiry,
       );
       return res.status(200).json({
         success: true,
         url,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  static async getObjectInfo(req, res) {
+    try {
+      const { bucketName, objectName } = req.params;
+      const objectInfo = await MediaService.getObjectInfo(
+        bucketName,
+        objectName,
+      );
+      return res.status(200).json({
+        success: true,
+        objectInfo,
       });
     } catch (error) {
       return res.status(500).json({
