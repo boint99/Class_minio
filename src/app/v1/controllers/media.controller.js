@@ -98,6 +98,38 @@ class MediaController {
       });
     }
   }
+
+  static async deleteObject(req, res) {
+    try {
+      const { bucketName, objectName } = req.params;
+      await MediaService.deleteObject(bucketName, objectName);
+      return res.status(200).json({
+        success: true,
+        message: "Object deleted successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  static async deleteObjects(req, res) {
+    try {
+      const { bucketName, objectName } = req.body;
+      await MediaService.deleteObjects(bucketName, objectName);
+      return res.status(200).json({
+        success: true,
+        message: "Objects deleted successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 module.exports = MediaController;

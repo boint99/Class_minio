@@ -90,6 +90,24 @@ class MediaModel {
       throw error;
     }
   }
+
+  static async deleteObject(bucketName, objectName) {
+    try {
+      const deleted = await minioClient.removeObject(bucketName, objectName);
+      return deleted;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteObjects(bucketName, objectName = []) {
+    try {
+      const deleted = await minioClient.removeObjects(bucketName, objectName);
+      return deleted;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = MediaModel;

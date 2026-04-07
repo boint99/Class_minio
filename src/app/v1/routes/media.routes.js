@@ -22,4 +22,8 @@ router.get("/:bucketName/:objectName/url", MediaController.getObjectUrl);
 
 router.get("/:bucketName/:objectName/info", MediaController.getObjectInfo);
 
+router.delete("/multiple", MediaController.deleteObjects);
+
+router.delete("/:bucketName/:objectName", MediaController.deleteObject);
+
 module.exports = router;

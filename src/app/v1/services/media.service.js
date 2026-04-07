@@ -61,6 +61,30 @@ class MediaService {
       throw error;
     }
   }
+
+  static async deleteObject(bucketName, objectName) {
+    try {
+      if (!bucketName || !objectName) {
+        throw new Error("Bucket name and object name are required");
+      }
+      return await MediaModel.deleteObject(bucketName, objectName);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async deleteObjects(bucketName, objectName) {
+    try {
+      if (!bucketName || !objectName) {
+        throw new Error("Bucket name and object name are required");
+      } else if (!Array.isArray(objectName)) {
+        throw new Error("objectName should be an array of object names");
+      }
+      return await MediaModel.deleteObjects(bucketName, objectName);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = MediaService;
